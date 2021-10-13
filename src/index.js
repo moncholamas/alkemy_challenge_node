@@ -1,6 +1,11 @@
-import Express from 'express';
-const app = Express();
+import app from './app'
 
-app.listen(3000,()=>{
-    console.log("arrancamos");
-})
+
+
+function main(){
+    app.listen(app.get('port'),()=>{
+        console.log("Servidor corriendo en el puerto: ", app.get('port'));
+    });
+}
+
+main();
