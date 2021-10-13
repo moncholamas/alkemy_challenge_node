@@ -1,5 +1,7 @@
 import Express from 'express';
-import loginROuter from './Routes/loginRouter'
+import loginRouter from './Routes/loginRouter'
+import characterRouter from './Routes/charactersRouter'
+
 
 const app = Express();
 
@@ -11,8 +13,8 @@ app.set('port',3000);
 
 
 //routes
-app.use('/auth',loginROuter)
-
+app.use('/auth', loginRouter );
+app.use("/characters", characterRouter );
 
 
 
