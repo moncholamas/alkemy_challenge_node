@@ -30,6 +30,13 @@ CREATE TABLE apariciones(
 	PRIMARY KEY (id_personaje, id_pelicula_serie)
 );
 
+CREATE TABLE users(
+	id_user SERIAL,
+	name_user VARCHAR UNIQUE,
+	pass_user VARCHAR,
+	PRIMARY KEY (id_user)
+)
+
 ALTER TABLE peliculas_series ADD CONSTRAINT "fkgeneros" 
     FOREIGN KEY (id_genero)
     REFERENCES generos(id_genero)
