@@ -1,5 +1,5 @@
 import app from './app'
-import sequelize from './DB/connection'
+import {sequelize} from './DB/connection'
 
 
 async function main(){
