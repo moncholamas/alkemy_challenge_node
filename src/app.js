@@ -1,7 +1,8 @@
 import Express from 'express';
-import loginRouter from './Routes/loginRouter'
-import characterRouter from './Routes/characterRouter'
-import movieRouter from './Routes/movieRouter'
+import loginRouter from './Routes/loginRouter';
+import characterRouter from './Routes/characterRouter';
+import movieRouter from './Routes/movieRouter';
+import {validator} from './Helpers/tokenValidator'
 
 const app = Express();
 
@@ -14,7 +15,9 @@ app.set('port',3000);
 
 //routes
 app.use('/auth', loginRouter );
-app.use("/characters", characterRouter );
+
+//para estas rutas verifico si poseen token
+app.use("/characters", validator ,characterRouter );
 app.use("/movies", movieRouter );
 
 
