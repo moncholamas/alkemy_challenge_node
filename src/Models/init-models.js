@@ -4,12 +4,14 @@ import _apariciones from  "./apariciones.js";
 import _generos from  "./generos.js";
 import _peliculas_series from  "./peliculas_series.js";
 import _personajes from  "./personajes.js";
+import _users from  "./users.js";
 
 export default function initModels(sequelize) {
   var apariciones = _apariciones.init(sequelize, DataTypes);
   var generos = _generos.init(sequelize, DataTypes);
   var peliculas_series = _peliculas_series.init(sequelize, DataTypes);
   var personajes = _personajes.init(sequelize, DataTypes);
+  var users = _users.init(sequelize, DataTypes);
 
   peliculas_series.belongsToMany(personajes, { as: 'id_personaje_personajes', through: apariciones, foreignKey: "id_pelicula_serie", otherKey: "id_personaje" });
   personajes.belongsToMany(peliculas_series, { as: 'id_pelicula_serie_peliculas_series', through: apariciones, foreignKey: "id_personaje", otherKey: "id_pelicula_serie" });
@@ -25,5 +27,6 @@ export default function initModels(sequelize) {
     generos,
     peliculas_series,
     personajes,
+    users,
   };
 }

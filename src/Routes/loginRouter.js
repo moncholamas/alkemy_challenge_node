@@ -1,11 +1,10 @@
 import Express from 'express';
-import {loginAction} from '../Controllers/loginController'
+import {login, logup} from '../Controllers/loginController'
 
 const router = Express.Router();
 
 
-router.get('/login', loginAction);
-//router.post('/login', login);
-//router.post('/register', logup);
+router.post('/login', login);
+router.post('/register', logup);
 
 export default router;
