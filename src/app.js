@@ -18,7 +18,7 @@ app.use('/auth', loginRouter );
 
 //para estas rutas verifico si poseen token
 app.use("/characters", validator ,characterRouter );
-app.use("/movies", movieRouter );
+app.use("/movies", validator, movieRouter );
 
 
 

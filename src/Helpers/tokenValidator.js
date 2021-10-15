@@ -4,7 +4,6 @@ export function validator(req,res,next){
 
     try {
         const verifytoken = jsonwebtoken.verify(token,'alkemy');
-        console.log(verifytoken);
         return next();
     } catch (error) {
         console.log(error);
