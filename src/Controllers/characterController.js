@@ -49,15 +49,30 @@ export async function getAll(req,res){
             });
         }
 
-        //si ingresa una combinacion de filtros
-        if(age || weight){
-            const resultado = await buscar({age,weight});
+        //si se ingresa una edad
+        if(age){
+            const resultado = await buscarPorEdad(age);
             if(resultado.length===0){return res.json({msg:'no se encontraron personajes dentro de los parametros de busqueda'})}
 
             return res.json({
                 data: resultado
             });
         }
+
+        //si se ingresa un peso
+        if(weight){
+            const resultado = await buscarPorPeso(weight);
+            if(resultado.length===0){return res.json({msg:'no se encontraron personajes dentro de los parametros de busqueda'})}
+
+            return res.json({
+                data: resultado
+            });
+        }
+
+        //QUEDA PENDIENTE 
+                //Busquedas menores y mayores qué
+                //refactorizar 
+
 
         //si ingresan cualquier otro parametro de busqueda
         return res.json({
@@ -80,16 +95,14 @@ async function buscarPorAparicion(id_movie){
 }
 
 async function buscarPorEdad(edad){
-    const coincidencias = {}
     initModels(sequelize);
-    const listadoPersonajes = await personajes.findAll({where:{coincidencias}});
+    const listadoPersonajes = await personajes.findAll({where:{edad}});
     return listadoPersonajes;
 }
 
 async function buscarPorPeso(peso){
-    const coincidencias = {}
     initModels(sequelize);
-    const listadoPersonajes = await personajes.findAll({where:{coincidencias}});
+    const listadoPersonajes = await personajes.findAll({where:{peso}});
     return listadoPersonajes;
 }
 
