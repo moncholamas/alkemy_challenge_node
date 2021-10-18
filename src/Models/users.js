@@ -10,10 +10,10 @@ export default class users extends Model {
       allowNull: false,
       primaryKey: true
     },
-    name_user: {
+    mail_user: {
       type: DataTypes.STRING,
       allowNull: true,
-      unique: "users_name_user_key"
+      unique: "users_mail_user_key"
     },
     pass_user: {
       type: DataTypes.STRING,
@@ -26,10 +26,10 @@ export default class users extends Model {
     timestamps: false,
     indexes: [
       {
-        name: "users_name_user_key",
+        name: "users_mail_user_key",
         unique: true,
         fields: [
-          { name: "name_user" },
+          { name: "mail_user" },
         ]
       },
       {

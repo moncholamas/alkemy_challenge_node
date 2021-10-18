@@ -32,7 +32,7 @@ CREATE TABLE apariciones(
 
 CREATE TABLE users(
 	id_user SERIAL,
-	name_user VARCHAR UNIQUE,
+	mail_user VARCHAR UNIQUE,
 	pass_user VARCHAR,
 	PRIMARY KEY (id_user)
 )
