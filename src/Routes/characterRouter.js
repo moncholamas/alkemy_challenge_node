@@ -3,9 +3,9 @@ import {getOne, getAll, newPersonaje, deletePersonaje, updatePersonaje} from '..
 
 const router = Express.Router();
 
-//router.get('/:personaje', getOne);
+//Routes
 router.get('/', getAll);
-router.post('/new', newPersonaje);
+router.post('/', newPersonaje);
 router.delete('/delete/:id', deletePersonaje);
 router.put('/update/:id', updatePersonaje);
 

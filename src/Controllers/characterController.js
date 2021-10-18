@@ -3,23 +3,57 @@ import initModels from '../Models/init-models';
 import {sequelize} from '../DB/connection'
 
 export async function getAll(req,res){
-    try {
-        initModels(sequelize);
-        const allPersonajes = await personajes.findAll({attributes:['imagen','nombre']});
+    if(req.query==={}){
+        //si no tiene parámetros de búsqueda devuelve todos los personajes
+        try {
+            initModels(sequelize);
+            const allPersonajes = await personajes.findAll({attributes:['imagen','nombre']});
+    
+            if (allPersonajes.length===0){return res.status(200).json({msg:"no existe personajes cargados aún"})}
+    
+            return res.status(200).json({
+                data: allPersonajes
+            })
+        } catch (error) {
+            console.log(error);
+            return res.status(400).json({
+                msg: "error al obtener los personajes"
+            })
+        }
+    }
+    else{
+        console.log(req.query);
+        //hace la busqueda por los parametros ingresados
+        //si recibe un nombre busca por este campo
+        const {name, edad, peso, peli_o_serie} = req.query;
 
-        if (allPersonajes.length===0){return res.status(200).json({msg:"no existe personajes cargados aún"})}
+        //si ingresan el nombre
+        if(name){
+            const resultado = await buscarPorNombre(name);
+            console.log(resultado)
+            if(resultado.length===0){return res.json({msg:'no se encontraron coincidencias'})}
 
-        return res.status(200).json({
-            data: allPersonajes
-        })
-    } catch (error) {
-        console.log(error);
-        return res.status(400).json({
-            msg: "error al obtener los personajes"
+            return res.json({
+                data: resultado
+            });
+        }
+
+        //si ingresa una combinacion de filtros
+
+
+        //si ingresan cualquier otro parametro de busqueda
+        return res.json({
+            msg: "no se reconoce el campo para realizar filtros, por favor ingrese nombre, peso, edad o pelicula/serie"  
         })
     }
+    
 }
 
+async function buscarPorNombre(nombre){
+    initModels(sequelize);
+    const listadoPersonajes = await personajes.findAll({where:{nombre}});
+    return listadoPersonajes;
+}
 
 
 export async function newPersonaje(req,res){
