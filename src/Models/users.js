@@ -13,7 +13,10 @@ export default class users extends Model {
     mail_user: {
       type: DataTypes.STRING,
       allowNull: true,
-      unique: "users_mail_user_key"
+      unique: "users_mail_user_key",
+      validate:{
+        isEmail: true
+      }
     },
     pass_user: {
       type: DataTypes.STRING,

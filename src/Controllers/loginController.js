@@ -70,7 +70,7 @@ export  async function logup(req,res){
                 msg: "el correo electrónico ya existe, por favor elige otro"
             });
         }
-        if(error.name === 'Error'){
+        if(error.name === 'SequelizeValidationError'){
             return res.json({
                 msg: "ingrese un correo con formato válido"
             });
