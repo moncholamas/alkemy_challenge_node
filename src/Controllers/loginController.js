@@ -8,7 +8,6 @@ import transport from '../Helpers/mailer';
 
 export async function login(req,res){
     const {mail_user, pass_user} = req.body;
-    console.log(req.body)
     try {
         initModels(sequelize);
         const userLogeado = await users.findOne({where:{mail_user}});
