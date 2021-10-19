@@ -3,6 +3,7 @@ import initModels from '../Models/init-models';
 import {sequelize} from '../DB/connection';
 import {encriptar, compararEncryp} from '../Helpers/encrypt';
 import jsonwebtoken from 'jsonwebtoken';
+import transport from '../Helpers/mailer';
 
 
 export async function login(req,res){
@@ -58,13 +59,26 @@ export  async function logup(req,res){
             {
                expiresIn: 86400 //dura un dia entero el token 
             });
+        
+        await transport.sendMail({
+            from: 'moncholamas@gmail.com',
+            to: `<${mail_user}>`,
+            subject: 'Gracias por usar nuestra API',
+            html: `<h1>Te damos la bienvenida</h1>
+                <h3>Disfruta de los personajes de Disney</h3>
+                <p>Con nuestra API podrás encontrar los personajes de tus
+                series y peliculas favoritas.
+                </p>
+                <p>¡Que lo disfrutes!</p>
+            `
+        });
 
         return res.json({
             msg: `usuario creado correctamente, te damos la bienvenida ${mail_user}`,
-            token
+            token,
         });
     } catch (error) {
-        console.error(error);
+
         if(error.name === 'SequelizeUniqueConstraintError'){
             return res.json({
                 msg: "el correo electrónico ya existe, por favor elige otro"
@@ -76,9 +90,13 @@ export  async function logup(req,res){
             });
         }
 
+        //error al generar el envio del correo electronico
+        if (error.response && error.response.body && error.response.body.errorors) {
+            error.response.body.errorors.forEach(error => console.log('%s: %s', error.field, error.message));
+        }
+
         return res.json({
             msg: "error al crear el usuario",
-            data: error.name
         });
     }
 }

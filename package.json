@@ -19,6 +19,8 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
+    "nodemailer": "^6.7.0",
+    "nodemailer-sendgrid": "^1.0.3",
     "pg": "^8.7.1",
     "pg-core": "^0.1.15",
     "pg-hstore": "^2.3.4",
