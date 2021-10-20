@@ -1,8 +1,8 @@
 import personajes from '../Models/personajes';
 import initModels from '../Models/init-models';
 import {sequelize} from '../DB/connection'
-import apariciones from '../Models/apariciones';
-import {Op} from 'sequelize';
+import { buscarPorNombre, buscarPorAparicion, buscarPorEdad, buscarPorPeso } from './functions/functionsSearch';
+
 
 export async function getAll(req,res){
 
@@ -28,51 +28,18 @@ export async function getAll(req,res){
         //hace la busqueda por los parametros ingresados
         //si recibe un nombre busca por este campo
         const {name, age, weight, movies} = req.query;
-
+        let resultado;
         //si ingresan el nombre
-        if(name){
-            const resultado = await buscarPorNombre(name);
-            if(resultado.length===0){return res.json({msg:'no se encontraron personajes con el nombre ingresado'})}
-
-            return res.json({
-                data: resultado
-            });
-        }
+        if(name){ return res.json(await buscarPorNombre(name));}
 
         //si pasan el id de alguna movie
-        if(movies){
-            const resultado = await buscarPorAparicion(movies);
-            if(resultado.length===0){return res.json({msg:'no se encontraron personajes con la pelicula o serie ingresada'})}
-
-            return res.json({
-                data: resultado
-            });
-        }
+        if(movies){return res.json(await buscarPorAparicion(movies));}
 
         //si se ingresa una edad
-        if(age){
-            const resultado = await buscarPorEdad(age);
-            if(resultado.length===0){return res.json({msg:'no se encontraron personajes dentro de los parametros de busqueda'})}
-
-            return res.json({
-                data: resultado
-            });
-        }
+        if(age){return res.json( await buscarPorEdad(age));}
 
         //si se ingresa un peso
-        if(weight){
-            const resultado = await buscarPorPeso(weight);
-            if(resultado.length===0){return res.json({msg:'no se encontraron personajes dentro de los parametros de busqueda'})}
-
-            return res.json({
-                data: resultado
-            });
-        }
-
-        //QUEDA PENDIENTE 
-                //Busquedas menores y mayores qué
-                //refactorizar 
-
+        if(weight){return res.json( await buscarPorPeso(weight));}
 
         //si ingresan cualquier otro parametro de busqueda
         return res.json({
@@ -82,29 +49,7 @@ export async function getAll(req,res){
     
 }
 
-async function buscarPorNombre(nombre){
-    initModels(sequelize);
-    const listadoPersonajes = await personajes.findAll({where:{nombre: {[Op.substring]: nombre,}}});
-    return listadoPersonajes;
-}
 
-async function buscarPorAparicion(id_movie){
-    initModels(sequelize);
-    const listadoPersonajes = await personajes.findAll({include:{model:apariciones,as:'apariciones',where:{id_pelicula_serie:id_movie}}});
-    return listadoPersonajes;
-}
-
-async function buscarPorEdad(edad){
-    initModels(sequelize);
-    const listadoPersonajes = await personajes.findAll({where:{edad}});
-    return listadoPersonajes;
-}
-
-async function buscarPorPeso(peso){
-    initModels(sequelize);
-    const listadoPersonajes = await personajes.findAll({where:{peso}});
-    return listadoPersonajes;
-}
 
 export async function newPersonaje(req,res){
     const {nombre, imagen, peso, edad, historia, apariciones}= req.body;
