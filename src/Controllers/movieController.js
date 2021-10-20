@@ -22,7 +22,7 @@ export async function getAll(req,res){
     else{
         //hace la busqueda por los parametros ingresados
         //si recibe un nombre busca por este campo
-        const {titulo, genero, order} = req.query;
+        const {titulo, id_genero, order} = req.query;
 
         //si ingresan el nombre
         if(titulo){
@@ -33,10 +33,22 @@ export async function getAll(req,res){
                 data: resultado
             });
         }
+        if(id_genero){
+            const resultado = await buscarPorGenero(id_genero);
+            if(resultado.length===0){return res.json({msg:'no se encontraron items con el titulo ingresado'})}
 
-        //QUEDA PENDIENTE 
-                //Filtrar por genero y permitir ordenacion
-                //refactorizar 
+            return res.json({
+                data: resultado
+            });
+        }
+        if(order){
+            const resultado = await buscarPorFecha(order);
+            if(resultado.length===0){return res.json({msg:'no se encontraron items con el titulo ingresado'})}
+
+            return res.json({
+                data: resultado
+            });
+        }
 
         //si ingresan cualquier otro parametro de busqueda
         return res.json({
@@ -48,8 +60,18 @@ export async function getAll(req,res){
 
 async function buscarPorTitulo(titulo){
     initModels(sequelize);
-    const listadoPersonajes = await peliculas_series.findAll({where:{titulo: {[Op.substring]: titulo}}});
-    return listadoPersonajes;
+    const listadoMovies = await peliculas_series.findAll({where:{titulo: {[Op.substring]: titulo}}});
+    return listadoMovies;
+}
+async function buscarPorGenero(id_genero){
+    initModels(sequelize);
+    const listadoMovies= await peliculas_series.findAll({where:{id_genero}});
+    return listadoMovies;
+}
+async function buscarPorFecha(order){
+    initModels(sequelize);
+    const listadoMovies= await peliculas_series.findAll({order:[['fecha_creacion', order.toUpperCase()]]});
+    return listadoMovies;
 }
 
 export async function getById(req, res){
