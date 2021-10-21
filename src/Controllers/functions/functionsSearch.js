@@ -68,7 +68,7 @@ export async function buscarPorPeso(peso){
 }
 
 
-//------------------------- funciones de busqueda para movies -----------------//
+//-------------------------------- funciones de busqueda para movies -----------------//
 
 export async function buscarPorTitulo(titulo){
     try {

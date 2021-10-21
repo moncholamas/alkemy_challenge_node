@@ -7,6 +7,6 @@ export function validator(req,res,next){
         return next();
     } catch (error) {
         console.log(error);
-        return res.json({msg:"error al validar el token"})
+        return res.json({msg:"autenticación fallida, necesita iniiar sesión para continuar, si no tiene cuenta ingrese a: /register"})
     }
 }
