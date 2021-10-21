@@ -51,3 +51,10 @@ ALTER TABLE apariciones ADD CONSTRAINT "fkpeliculas"
     FOREIGN KEY (id_pelicula_serie)
     REFERENCES peliculas_series(id_pelicula_serie)
 ;
+
+INSERT INTO generos VALUES 
+(1, 'infantil'), 
+(2, 'accion'), 
+(3, 'ciencia ficcion'), 
+(4, 'juvenil'), 
+(5, 'animado'); 

@@ -2,6 +2,8 @@ import peliculas_series from '../Models/peliculas_series';
 import initModels from '../Models/init-models';
 import {sequelize} from '../DB/connection';
 import { buscarPorGenero, buscarPorTitulo, ordenarPorFecha } from './functions/functionsSearch';
+import apariciones from '../Models/apariciones';
+import personajes from '../Models/personajes';
 
 export async function getAll(req,res){
     //si no tiene parametros de busqueda devolvemos todas las series/peliculas
@@ -21,10 +23,10 @@ export async function getAll(req,res){
     }
     else{
         //hace la busqueda por los parametros ingresados
-        const {titulo, id_genero, order} = req.query;
+        const {titulo, genre, order} = req.query;
 
         if(titulo){ return res.json(await buscarPorTitulo(titulo))}
-        if(id_genero){return res.json(await buscarPorGenero(id_genero))}
+        if(genre){return res.json(await buscarPorGenero(genre))}
         if(order){return res.json(await ordenarPorFecha(order))}
 
         //si ingresan cualquier otro parametro de busqueda
@@ -53,17 +55,39 @@ export async function getById(req, res){
     }
 }
 
+
+
 export async function newMovie(req,res){
     //por el momento crea la serie sin genero ni personajes que aparecen
-    const {imagen,titulo,fecha_creacion,calificacion,genero} = req.body;
+    const {imagen,titulo,fecha_creacion,calificacion,id_genero, listado_personajes} = req.body;
+    let personajesPresentes;
     try {
         initModels(sequelize);
         const nueva = await peliculas_series.create({
-            imagen, titulo, fecha_creacion, calificacion
+            imagen, 
+            titulo, 
+            fecha_creacion, 
+            calificacion,
+            id_genero: id_genero || 1 //si no se ingresa un genero se entiende que es infantil
         });
 
+        //si mandan un arreglo de personajes los agrego a las apariciones de la pelicula
+        if(listado_personajes || listado_personajes.length!==0){
+            let aparicionesEnMovie = [];
+            for (const id_personaje of listado_personajes) {
+                const existePer = await personajes.findByPk(id_personaje);
+                
+                //si no encuntra el personaje muestra un error
+                if(!existePer) return res.json({msg:"no se encontraron personajes con el id ingresado"})
+                
+                //si existe el personaje lo agrego al arreglo de apariciones
+                aparicionesEnMovie.push({id_personaje, id_pelicula_serie:nueva.id_pelicula_serie})
+            }
+            personajesPresentes = await apariciones.bulkCreate(aparicionesEnMovie);
+        }
         return res.json({
-            data: nueva
+            data: nueva,
+            personajesPresentes
         });
     } catch (error) {
         console.log(error);
