@@ -43,7 +43,7 @@ export async function getById(req, res){
     const {id} = req.params;
     try {
         initModels(sequelize);
-        const detalles = await peliculas_series.findByPk(id);
+        const detalles = await peliculas_series.findByPk(id,{include:{model:apariciones,as:"personajes_presentes", attributes:['id_personaje']}});
         if(!detalles){return res.json({msg: "no se encontraron coincidencias"})}
 
         return res.json({

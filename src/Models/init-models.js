@@ -18,7 +18,7 @@ export default function initModels(sequelize) {
   peliculas_series.belongsTo(generos, { as: "id_genero_genero", foreignKey: "id_genero"});
   generos.hasMany(peliculas_series, { as: "peliculas_series", foreignKey: "id_genero"});
   apariciones.belongsTo(peliculas_series, { as: "id_pelicula_serie_peliculas_sery", foreignKey: "id_pelicula_serie"});
-  peliculas_series.hasMany(apariciones, { as: "apariciones", foreignKey: "id_pelicula_serie"});
+  peliculas_series.hasMany(apariciones, { as: "personajes_presentes", foreignKey: "id_pelicula_serie"});
   apariciones.belongsTo(personajes, { as: "id_personaje_personaje", foreignKey: "id_personaje"});
   personajes.hasMany(apariciones, { as: "apariciones", foreignKey: "id_personaje"});
 
