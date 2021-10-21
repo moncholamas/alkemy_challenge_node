@@ -13,9 +13,11 @@ export async function getAll(req,res){
         try {
             initModels(sequelize);
             const allPersonajes = await personajes.findAll({attributes:['imagen','nombre']});
-    
+            
+            //si no encuentra resultado muestra un msj
             if (allPersonajes.length===0){return res.status(200).json({msg:"no existe personajes cargados aún"})}
     
+            //si encuentra devuelve el resultado
             return res.status(200).json({
                 data: allPersonajes
             })
@@ -28,10 +30,8 @@ export async function getAll(req,res){
     }
     else{
         //hace la busqueda por los parametros ingresados
-        //si recibe un nombre busca por este campo
         const {name, age, weight, movies} = req.query;
-        let resultado;
-        //si ingresan el nombre
+        //si buscan por el nombre o una parte
         if(name){ return res.json(await buscarPorNombre(name));}
 
         //si pasan el id de alguna movie
@@ -43,9 +43,9 @@ export async function getAll(req,res){
         //si se ingresa un peso
         if(weight){return res.json( await buscarPorPeso(weight));}
 
-        //si ingresan cualquier otro parametro de busqueda
+        //si ingresan cualquier otro parametro que no está definido
         return res.json({
-            msg: "no se reconoce el campo para realizar filtros, por favor ingrese nombre, peso, edad o pelicula/serie"  
+            msg: "no se reconoce el campo para realizar filtros, por favor ingrese nombre, peso, edad o id de pelicula/serie"  
         })
     }
     
@@ -57,7 +57,11 @@ export async function getById(req, res){
     try {
         initModels(sequelize);
         const detalles = await personajes.findByPk(id,{include:{model:apariciones,as:"apariciones",attributes:['id_pelicula_serie']}});
+        
+        //si no encuntra coincidencias muestra un msj
         if(!detalles){return res.json({msg: "no se encontraron coincidencias"})}
+        
+        //si encuentra coincidencias devuelve el resultado
         return res.json({
             data: detalles
         })
@@ -81,8 +85,9 @@ export async function newPersonaje(req,res){
             historia
         });
 
+        //si hay ids de peliculas o series en movies[]
         if(movies && movies.length!==0){
-            //si hay ids de peliculas o series en movie[]
+            
             //cargo estas apariciones
             let arrayApariciones = [];
             for (const movie of movies) {
@@ -120,7 +125,7 @@ export async function updatePersonaje(req,res){
     const {nombre, imagen, peso, edad, historia, movies}= req.body;
     try {
         initModels(sequelize);
-        const nuevo = await personajes.update({
+        const actualizado = await personajes.update({
             nombre,
             imagen,
             peso,
@@ -128,7 +133,7 @@ export async function updatePersonaje(req,res){
             historia
         },{where:{id_personaje:id}});
 
-        if(nuevo[0] === 0){return res.status(200).json({msg:"no se encontraron coincidencias para actualizar"})}
+        if(actualizado[0] === 0){return res.status(200).json({msg:"no se encontraron coincidencias para actualizar"})}
 
         return res.status(201).json({
             msg: "personaje editado correctamente"

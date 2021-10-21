@@ -31,10 +31,9 @@ export async function getAll(req,res){
 
         //si ingresan cualquier otro parametro de busqueda
         return res.json({
-            msg: "no se reconoce el campo para realizar filtros, por favor ingrese nombre, peso, edad o pelicula/serie"  
+            msg: "no se reconoce el campo para realizar filtros"  
         })
     }
-    
 }
 
 
@@ -58,7 +57,6 @@ export async function getById(req, res){
 
 
 export async function newMovie(req,res){
-    //por el momento crea la serie sin genero ni personajes que aparecen
     const {imagen,titulo,fecha_creacion,calificacion,id_genero, listado_personajes} = req.body;
     let personajesPresentes;
     try {
@@ -68,7 +66,7 @@ export async function newMovie(req,res){
             titulo, 
             fecha_creacion, 
             calificacion,
-            id_genero: id_genero || 1 //si no se ingresa un genero se entiende que es infantil
+            id_genero: id_genero || 1 //si no se ingresa un genero se ingresa como infantil
         });
 
         //si mandan un arreglo de personajes los agrego a las apariciones de la pelicula
@@ -102,7 +100,7 @@ export async function deleteMovie(req,res){
     const {id} = req.params;
     try {
         initModels(sequelize);
-        const borradas = peliculas_series.destroy({where:{id_pelicula_serie:id}});
+        const borradas = await peliculas_series.destroy({where:{id_pelicula_serie:id}});
         if(borradas===0){return res.json({msg: "no se encontraron coincidencias para borrar"})}
         
         return res.json({

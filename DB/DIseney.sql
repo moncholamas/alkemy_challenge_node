@@ -52,6 +52,33 @@ ALTER TABLE apariciones ADD CONSTRAINT "fkpeliculas"
     REFERENCES peliculas_series(id_pelicula_serie)
 ;
 
+
+-------------------------- TRIGGERS
+CREATE OR REPLACE FUNCTION eliminar_apariciones() RETURNS TRIGGER
+AS $$
+DECLARE
+BEGIN
+IF (TG_TABLE_NAME = 'peliculas_series') THEN
+	DELETE FROM apariciones WHERE id_pelicula_serie = OLD.id_pelicula_serie;
+END IF;
+IF (TG_TABLE_NAME = 'personajes') THEN
+	DELETE FROM apariciones WHERE id_personaje = OLD.id_personaje;
+END IF;
+RETURN OLD;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER borrar_apariciones
+BEFORE DELETE ON peliculas_series
+FOR EACH ROW EXECUTE PROCEDURE eliminar_apariciones();
+
+CREATE TRIGGER borrar_apariciones
+BEFORE DELETE ON personajes
+FOR EACH ROW EXECUTE PROCEDURE eliminar_apariciones();
+
+
+------------------------DATOS INICIALES
+
 INSERT INTO generos VALUES 
 (1, 'infantil'), 
 (2, 'accion'), 
