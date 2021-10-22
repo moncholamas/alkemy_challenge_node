@@ -61,32 +61,39 @@ export async function newMovie(req,res){
     let personajesPresentes;
     try {
         initModels(sequelize);
-        const nueva = await peliculas_series.create({
-            imagen, 
-            titulo, 
-            fecha_creacion, 
-            calificacion,
-            id_genero: id_genero || 1 //si no se ingresa un genero se ingresa como infantil
-        });
 
-        //si mandan un arreglo de personajes los agrego a las apariciones de la pelicula
-        if(listado_personajes || listado_personajes.length!==0){
-            let aparicionesEnMovie = [];
-            for (const id_personaje of listado_personajes) {
-                const existePer = await personajes.findByPk(id_personaje);
-                
-                //si no encuntra el personaje muestra un error
-                if(!existePer) return res.json({msg:"no se encontraron personajes con el id ingresado"})
-                
-                //si existe el personaje lo agrego al arreglo de apariciones
-                aparicionesEnMovie.push({id_personaje, id_pelicula_serie:nueva.id_pelicula_serie})
+        await sequelize.transaction(async (t)=>{
+            const nueva = await peliculas_series.create({
+                imagen, 
+                titulo, 
+                fecha_creacion, 
+                calificacion,
+                id_genero: id_genero || 1 //si no se ingresa un genero se ingresa como infantil
+            },{transaction:t});
+    
+            //si mandan un arreglo de personajes los agrego a las apariciones de la pelicula
+            if(listado_personajes || listado_personajes.length!==0){
+                let aparicionesEnMovie = [];
+                for (const id_personaje of listado_personajes) {
+                    const existePer = await personajes.findByPk(id_personaje);
+                    
+                    //si no encuntra el personaje muestra un error
+                    if(!existePer) return res.json({msg:"no se encontraron personajes con el id ingresado"})
+                    
+                    //si existe el personaje lo agrego al arreglo de apariciones
+                    aparicionesEnMovie.push({id_personaje, id_pelicula_serie:nueva.id_pelicula_serie})
+                }
+                personajesPresentes = await apariciones.bulkCreate(aparicionesEnMovie,{transaction:t});
             }
-            personajesPresentes = await apariciones.bulkCreate(aparicionesEnMovie);
-        }
-        return res.json({
-            data: nueva,
-            personajesPresentes
+
+            t.afterCommit(()=>{
+                return res.json({
+                    data: nueva,
+                    personajesPresentes
+                });
+            });
         });
+        
     } catch (error) {
         console.log(error);
         return res.json({
@@ -122,41 +129,48 @@ export async function updateMovie(req,res){
     const {imagen,titulo,fecha_creacion,calificacion,id_genero,listado_personajes} = req.body;
     try {
         initModels(sequelize);
-        const actualizadas = await peliculas_series.update({
-            imagen, 
-            titulo, 
-            fecha_creacion, 
-            calificacion, 
-            id_genero: id_genero || 1
-        },{
-            where:{id_pelicula_serie:id}
-        });
-        console.log(actualizadas);
-        if(actualizadas[0] === 0){return res.json({msg: "no se encontraron coincidencias para actualizar"})}
 
-
-        //si mandan un arreglo de personajes los agrego a las apariciones de la pelicula
-        if(listado_personajes){
-            //borro las apariciones para la pelicula serie
-            await apariciones.destroy({where:{id_pelicula_serie:id}});
-
-            //cargo las nuevas
-            let aparicionesEnMovie = [];
-            for (const id_personaje of listado_personajes) {
-                const existePer = await personajes.findByPk(id_personaje);
-                
-                //si no encuntra el personaje muestra un error
-                if(!existePer) return res.json({msg:"no se encontraron personajes con el id ingresado"})
-                
-                //si existe el personaje lo agrego al arreglo de apariciones
-                aparicionesEnMovie.push({id_personaje, id_pelicula_serie:id})
+        await sequelize.transaction(async (t)=>{   
+            const actualizadas = await peliculas_series.update({
+                imagen, 
+                titulo, 
+                fecha_creacion, 
+                calificacion, 
+                id_genero: id_genero || 1
+            },{
+                where:{id_pelicula_serie:id},
+                transaction:t
+            });
+            console.log(actualizadas);
+            if(actualizadas[0] === 0){return res.json({msg: "no se encontraron coincidencias para actualizar"})}
+    
+    
+            //si mandan un arreglo de personajes los agrego a las apariciones de la pelicula
+            if(listado_personajes){
+                //borro las apariciones para la pelicula serie
+                await apariciones.destroy({where:{id_pelicula_serie:id}});
+    
+                //cargo las nuevas
+                let aparicionesEnMovie = [];
+                for (const id_personaje of listado_personajes) {
+                    const existePer = await personajes.findByPk(id_personaje);
+                    
+                    //si no encuntra el personaje muestra un error
+                    if(!existePer) return res.json({msg:"no se encontraron personajes con el id ingresado"})
+                    
+                    //si existe el personaje lo agrego al arreglo de apariciones
+                    aparicionesEnMovie.push({id_personaje, id_pelicula_serie:id})
+                }
+                await apariciones.bulkCreate(aparicionesEnMovie,{transaction:t});
             }
-            await apariciones.bulkCreate(aparicionesEnMovie);
-        }
-
-        return res.json({
-            msg: "item actualizado correctamente"
+            
+            t.afterCommit(()=>{
+                return res.json({
+                    msg: "item actualizado correctamente"
+                });
+            });
         });
+        
     } catch (error) {
         console.log(error);
         return res.json({

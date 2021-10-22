@@ -1,6 +1,6 @@
 import personajes from '../Models/personajes';
 import initModels from '../Models/init-models';
-import {sequelize} from '../DB/connection'
+import {sequelize} from '../DB/connection';
 import { buscarPorNombre, buscarPorAparicion, buscarPorEdad, buscarPorPeso } from './functions/functionsSearch';
 import apariciones from '../Models/apariciones';
 import peliculas_series from '../Models/peliculas_series';
@@ -75,44 +75,55 @@ export async function getById(req, res){
 export async function newPersonaje(req,res){
     const {nombre, imagen, peso, edad, historia, movies}= req.body;
     let aparicionesPersonaje;
+
+
     try {
-        initModels(sequelize);
-        const nuevo = await personajes.create({
-            nombre,
-            imagen,
-            peso,
-            edad,
-            historia
-        });
-
-        //si hay ids de peliculas o series en movies[]
-        if(movies && movies.length!==0){
-            
-            //cargo estas apariciones
-            let arrayApariciones = [];
-            for (const movie of movies) {
-                //verifico si la movie existe
-                const movieNueva = await peliculas_series.findByPk(parseInt(movie));
-
-                // si la pelicula no existe muestro un error
-                if(!movieNueva) res.json({msg: `no existe la pelicula con el id: ${movie}`});
-                
-                //agrego la pelicula al arreglo de apariciones
-                arrayApariciones.push({id_personaje:nuevo.id_personaje, id_pelicula_serie: movie});
-            }
-
-            //agrego todo el arreglo de apariciones a la DB
-            aparicionesPersonaje = await apariciones.bulkCreate(arrayApariciones);
-        }   
-        
-        return res.status(201).json({
-                msg: "personaje cargado correctamente",
-                data: nuevo,
-                apariciones: aparicionesPersonaje || null
+        //necesito cargar todo (transaccion)
+        await sequelize.transaction(async(t)=>{
+            initModels(sequelize);
+            const nuevo = await personajes.create({
+                nombre,
+                imagen,
+                peso,
+                edad,
+                historia
+            },{
+                transaction:t
             });
 
+            //si hay ids de peliculas o series en movies[]
+            if(movies && movies.length!==0){
+                
+                //cargo estas apariciones
+                let arrayApariciones = [];
+                for (const movie of movies) {
+                    //verifico si la movie existe
+                    const movieNueva = await peliculas_series.findByPk(parseInt(movie));
+
+                    // si la pelicula no existe muestro un error
+                    if(!movieNueva) res.json({msg: `no existe la pelicula con el id: ${movie}`});
+                    
+                    //agrego la pelicula al arreglo de apariciones
+                    arrayApariciones.push({id_personaje:nuevo.id_personaje, id_pelicula_serie: movie});
+                }
+
+                //agrego todo el arreglo de apariciones a la DB
+                aparicionesPersonaje = await apariciones.bulkCreate(arrayApariciones,{transaction:t});
+            }   
+            
+            t.afterCommit(
+                async()=>{
+                    return res.status(201).json({
+                        msg: "personaje cargado correctamente",
+                        data: nuevo,
+                        apariciones: aparicionesPersonaje || null
+                    });
+                });
+                }
+            );
+
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.status(200).json({
             msg: "error al ingresar nuevo personaje"
         });
@@ -123,45 +134,50 @@ export async function newPersonaje(req,res){
 export async function updatePersonaje(req,res){
     const id = req.params.id;
     const {nombre, imagen, peso, edad, historia, movies}= req.body;
-    let aparicionesPersonaje;
+
     try {
         initModels(sequelize);
-        const actualizado = await personajes.update({
-            nombre,
-            imagen,
-            peso,
-            edad,
-            historia
-        },{where:{id_personaje:id}});
 
-        if(actualizado[0] === 0){return res.status(200).json({msg:"no se encontraron coincidencias para actualizar"})}
-
-
-        //si hay ids de peliculas o series en movies[]
-        if(movies){
-            //si es un array vacio se borran las apariciones del personaje
-            //elimino todas las apariciones del personaje
-            await apariciones.destroy({where:{id_personaje: id}});
-
-            //cargo las nuevas
-            let arrayApariciones = [];
-            for (const movie of movies) {
-                //verifico si la movie existe
-                const movieNueva = await peliculas_series.findByPk(parseInt(movie));
-
-                // si la pelicula no existe muestro un error
-                if(!movieNueva) res.json({msg: `no existe la pelicula con el id: ${movie}`});
-                
-                //agrego la pelicula al arreglo de apariciones
-                arrayApariciones.push({id_personaje:id, id_pelicula_serie: movie});
+        await sequelize.transaction(async (t)=>{
+            const actualizado = await personajes.update({
+                nombre,
+                imagen,
+                peso,
+                edad,
+                historia
+            },{where:{id_personaje:id},transaction:t});
+    
+            if(actualizado[0] === 0){return res.status(200).json({msg:"no se encontraron coincidencias para actualizar"})}
+    
+    
+            //si hay ids de peliculas o series en movies[]
+            if(movies){
+                //si es un array vacio se borran las apariciones del personaje
+                //elimino todas las apariciones del personaje
+                await apariciones.destroy({where:{id_personaje: id}});
+    
+                //cargo las nuevas
+                let arrayApariciones = [];
+                for (const movie of movies) {
+                    //verifico si la movie existe
+                    const movieNueva = await peliculas_series.findByPk(parseInt(movie));
+    
+                    // si la pelicula no existe muestro un error
+                    if(!movieNueva) res.json({msg: `no existe la pelicula con el id: ${movie}`});
+                    
+                    //agrego la pelicula al arreglo de apariciones
+                    arrayApariciones.push({id_personaje:id, id_pelicula_serie: movie});
+                }
+    
+                //agrego todo el arreglo de apariciones a la DB
+                await apariciones.bulkCreate(arrayApariciones,{transaction:t});
             }
 
-            //agrego todo el arreglo de apariciones a la DB
-            aparicionesPersonaje = await apariciones.bulkCreate(arrayApariciones);
-        }   
-
-        return res.status(201).json({
-            msg: "personaje editado correctamente"
+            t.afterCommit(()=>{
+                return res.status(201).json({
+                    msg: "personaje editado correctamente"
+                });
+            });
         });
 
     } catch (error) {
