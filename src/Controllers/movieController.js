@@ -119,15 +119,40 @@ export async function deleteMovie(req,res){
 export async function updateMovie(req,res){
     //por el momento crea la serie sin genero ni personajes que aparecen
     const {id} = req.params;
-    const {imagen,titulo,fecha_creacion,calificacion,genero} = req.body;
+    const {imagen,titulo,fecha_creacion,calificacion,id_genero,listado_personajes} = req.body;
     try {
         initModels(sequelize);
         const actualizadas = await peliculas_series.update({
-            imagen, titulo, fecha_creacion, calificacion
+            imagen, 
+            titulo, 
+            fecha_creacion, 
+            calificacion, 
+            id_genero: id_genero || 1
         },{
             where:{id_pelicula_serie:id}
         });
-        if(actualizadas===0){return res.json({msg: "no se encontraron coincidencias para actualizar"})}
+        console.log(actualizadas);
+        if(actualizadas[0] === 0){return res.json({msg: "no se encontraron coincidencias para actualizar"})}
+
+
+        //si mandan un arreglo de personajes los agrego a las apariciones de la pelicula
+        if(listado_personajes){
+            //borro las apariciones para la pelicula serie
+            await apariciones.destroy({where:{id_pelicula_serie:id}});
+
+            //cargo las nuevas
+            let aparicionesEnMovie = [];
+            for (const id_personaje of listado_personajes) {
+                const existePer = await personajes.findByPk(id_personaje);
+                
+                //si no encuntra el personaje muestra un error
+                if(!existePer) return res.json({msg:"no se encontraron personajes con el id ingresado"})
+                
+                //si existe el personaje lo agrego al arreglo de apariciones
+                aparicionesEnMovie.push({id_personaje, id_pelicula_serie:id})
+            }
+            await apariciones.bulkCreate(aparicionesEnMovie);
+        }
 
         return res.json({
             msg: "item actualizado correctamente"

@@ -123,6 +123,7 @@ export async function newPersonaje(req,res){
 export async function updatePersonaje(req,res){
     const id = req.params.id;
     const {nombre, imagen, peso, edad, historia, movies}= req.body;
+    let aparicionesPersonaje;
     try {
         initModels(sequelize);
         const actualizado = await personajes.update({
@@ -134,6 +135,30 @@ export async function updatePersonaje(req,res){
         },{where:{id_personaje:id}});
 
         if(actualizado[0] === 0){return res.status(200).json({msg:"no se encontraron coincidencias para actualizar"})}
+
+
+        //si hay ids de peliculas o series en movies[]
+        if(movies){
+            //si es un array vacio se borran las apariciones del personaje
+            //elimino todas las apariciones del personaje
+            await apariciones.destroy({where:{id_personaje: id}});
+
+            //cargo las nuevas
+            let arrayApariciones = [];
+            for (const movie of movies) {
+                //verifico si la movie existe
+                const movieNueva = await peliculas_series.findByPk(parseInt(movie));
+
+                // si la pelicula no existe muestro un error
+                if(!movieNueva) res.json({msg: `no existe la pelicula con el id: ${movie}`});
+                
+                //agrego la pelicula al arreglo de apariciones
+                arrayApariciones.push({id_personaje:id, id_pelicula_serie: movie});
+            }
+
+            //agrego todo el arreglo de apariciones a la DB
+            aparicionesPersonaje = await apariciones.bulkCreate(arrayApariciones);
+        }   
 
         return res.status(201).json({
             msg: "personaje editado correctamente"
