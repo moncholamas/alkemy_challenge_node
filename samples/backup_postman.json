@@ -1,0 +1,365 @@
+{
+	"info": {
+		"_postman_id": "c83cf4a9-d27c-4c87-be66-40c0295de364",
+		"name": "Alkemy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "login",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mail_user\": \"moncholamas@gmail.com\",\n    \"pass_user\": \"Manu\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/auth/login",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mail_user\": \"moncholamas@gmail.com\",\n    \"pass_user\": \"Manu\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/auth/register",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "characters",
+			"item": [
+				{
+					"name": "getall",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\":\"darth maul\",\n    \"imagen\": \"url a una imagen2\",\n    \"peso\": 70,\n    \"edad\":31,\n    \"historia\":\"otra prueba cualquier\",\n    \"movies\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/characters/",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"characters",
+								""
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{alkemytoken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/characters/delete/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"characters",
+								"delete",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\":\"prueba\",\n    \"imagen\": \"pruebaimagen\",\n    \"peso\": 50,\n    \"edad\":21,\n    \"historia\":\"una prueba cualquier\",\n    \"movies\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/characters/update/10",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"characters",
+								"update",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "busquedas get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getbyid",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:3000/characters/10",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"characters",
+								"10"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "movies",
+			"item": [
+				{
+					"name": "getall",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/movies/6",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"movies",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"star wars 3\",\n    \"imagen\": \"unaimagenurl\",\n    \"fecha_creacion\": \"2000-06-06\",\n    \"calificacion\": 5,\n    \"genero\": 3,\n    \"listado_personajes\": [3,4,5,6]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/movies",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"movies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/movies/delete/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"movies",
+								"delete",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"star wars 22\",\n    \"imagen\": \"le cambie la imagen\",\n    \"fecha_creacion\": \"1988-06-06\",\n    \"calificacion\": 5,\n    \"listado_personajes\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/movies/update/6",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"movies",
+								"update",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "alkemytoken",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1vbmNobyIsImlhdCI6MTYzNDMyMDgzOSwiZXhwIjoxNjM0NDA3MjM5fQ.O6nO2LqZ6CoXQ1UDJrcjAi5tkIomcKVbM..."
+		},
+		{
+			"key": "alkemy3",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDY3MDMyMCwiZXhwIjoxNjM0NzU2NzIwfQ.9hW8wo8d-F2Ko7_qk38BPBOUt0cC9wqBwwBZ6qgsKbE"
+		}
+	]
+}
