@@ -126,14 +126,14 @@ Métodos disponibles para interactuar con personajes
     Header: token
     body: #no requiere
 
-#trae los detalles de la pelicula con el id seleccionado
+#crea una nueva pelicula o serie
 [POST] #verbo HTTP
 /movies/ #ruta
     Header: token
     body: {
         "titulo": string,
         "imagen": string,
-        "fecha_creacion": string('aaa-mm-dd'),
+        "fecha_creacion": string('aaaa-mm-dd'),
         "calificacion": integer[1,5], # toma por defecto 3 si no es ingresado
         "genero": integer, #toma por defecto 1 si no es ingresado
         "listado_personajes": [3,6] #consideramos que ya existen cargados los personajes con el id 3 y 6
