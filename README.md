@@ -77,6 +77,12 @@ npm run build
 npm run start
 ```
 
+___
+
+### Posibles mejoras
+
+
+- ingresar, modificar y eliminar géneros.
 
 
 ***
