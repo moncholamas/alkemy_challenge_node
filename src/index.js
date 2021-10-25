@@ -1,5 +1,7 @@
-import app from './app'
-import {sequelize} from './DB/connection'
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+import app from './app';
+import {sequelize} from './DB/connection';
 
 
 async function main(){
