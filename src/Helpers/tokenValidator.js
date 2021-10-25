@@ -7,6 +7,6 @@ export function validator(req,res,next){
         return next();
     } catch (error) {
         console.log(error);
-        return res.json({msg:"autenticación fallida, necesita iniiar sesión para continuar, si no tiene cuenta ingrese a: /register"})
+        return res.status(403).json({msg:"autenticación fallida, necesita iniiar sesión para continuar, si no tiene cuenta ingrese a: /register"})
     }
 }

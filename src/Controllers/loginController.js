@@ -10,15 +10,15 @@ config();
 export async function login(req,res){
     const {mail_user, pass_user} = req.body;
     try {
-        if(pass_user===''||mail_user==='') return res.json({msg: "la clave y el correo son datos obligatorios"});
+        if(pass_user===''||mail_user==='') return res.status(400).json({msg: "la clave y el correo son datos obligatorios"});
 
         initModels(sequelize);
         const userLogeado = await users.findOne({where:{mail_user}});
-        if(!userLogeado){return res.json({msg:"la direccion de correo electrónico ingresada no existe"})}
+        if(!userLogeado){return res.status(400).json({msg:"la direccion de correo electrónico ingresada no existe"})}
         
         //si el usuario existe comparo las claves
         const verification = await compararEncryp(pass_user,userLogeado.pass_user)
-        if(!verification){return res.json({msg:"la clave ingresada es incorrecta"})}
+        if(!verification){return res.status(400).json({msg:"la clave ingresada es incorrecta"})}
 
         //creo el token con jwt
         const token = jsonwebtoken.sign(
@@ -30,13 +30,13 @@ export async function login(req,res){
                expiresIn: 86400 //dura un dia entero el token 
             });
 
-        return res.json({
+        return res.status(201).json({
             msg: `Bienvenido de nuevo ${mail_user}`,
             token
         });
     } catch (error) {
         console.log(error);
-        return res.json({
+        return res.status(400).json({
         msg: "error al ingresar"
     });
     }
@@ -45,9 +45,8 @@ export async function login(req,res){
 
 export  async function logup(req,res){
     const {mail_user, pass_user} = req.body;
-
     try {
-        if(pass_user===''||mail_user==='') return res.json({msg: "la clave y el correo son datos obligatorios"});
+        if(pass_user===''||mail_user==='') return res.status(400).json({msg: "la clave y el correo son datos obligatorios"});
         
         initModels(sequelize);
         let userNuevo;
@@ -59,12 +58,12 @@ export  async function logup(req,res){
         } catch (error) {
             if(error.errors !== undefined){
                 if(error.name === 'SequelizeUniqueConstraintError'){
-                    return res.json({
+                    return res.status(400).json({
                         msg: "el correo electrónico ya existe, por favor elige otro"
                     });
                 }
-                return res.json({msg: error.errors[0].message});
                 
+                return res.status(400).json({msg: error.errors[0].message});
             }
         }
         
@@ -92,13 +91,13 @@ export  async function logup(req,res){
             `
         });
 
-        return res.json({
+        return res.status(201).json({
             msg: `usuario creado correctamente, te damos la bienvenida ${mail_user}`,
             token,
         });
     } catch (error) {
 
-        return res.json({
+        return res.status(400).json({
             msg: "error al crear el usuario",
         });
     }

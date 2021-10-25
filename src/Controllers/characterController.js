@@ -32,19 +32,19 @@ export async function getAll(req,res){
         //hace la busqueda por los parametros ingresados
         const {name, age, weight, movies} = req.query;
         //si buscan por el nombre o una parte
-        if(name){ return res.json(await buscarPorNombre(name));}
+        if(name){ return res.status(200).json(await buscarPorNombre(name));}
 
         //si pasan el id de alguna movie
-        if(movies){return res.json(await buscarPorAparicion(movies));}
+        if(movies){return res.status(200).json(await buscarPorAparicion(movies));}
 
         //si se ingresa una edad
-        if(age){return res.json( await buscarPorEdad(age));}
+        if(age){return res.status(200).json( await buscarPorEdad(age));}
 
         //si se ingresa un peso
-        if(weight){return res.json( await buscarPorPeso(weight));}
+        if(weight){return res.status(200).json( await buscarPorPeso(weight));}
 
         //si ingresan cualquier otro parametro que no está definido
-        return res.json({
+        return res.status(400).json({
             msg: "no se reconoce el campo para realizar filtros, por favor ingrese nombre, peso, edad o id de pelicula/serie"  
         })
     }
@@ -59,15 +59,15 @@ export async function getById(req, res){
         const detalles = await personajes.findByPk(id,{include:{model:apariciones,as:"apariciones",attributes:['id_pelicula_serie']}});
         
         //si no encuntra coincidencias muestra un msj
-        if(!detalles){return res.json({msg: "no se encontraron coincidencias"})}
+        if(!detalles){return res.status(200).json({msg: "no se encontraron coincidencias"})}
         
         //si encuentra coincidencias devuelve el resultado
-        return res.json({
+        return res.status(200).json({
             data: detalles
         })
     } catch (error) {
         console.log(error);
-        res.json({msg:"error al buscar por id de personaje"})
+        return res.status(400).json({msg:"error al buscar por id de personaje"})
     }
 }
 
@@ -98,7 +98,7 @@ export async function newPersonaje(req,res){
             }catch(error){
                 //si no cumple las restricciones del modelo devuelve el error
                 if(error.errors!== undefined){
-                    return res.json({msg: error.errors[0].message});
+                    return res.status(400).json({msg: error.errors[0].message});
                 }
             }   
 
@@ -136,7 +136,7 @@ export async function newPersonaje(req,res){
             );
 
     } catch (error) {
-        return res.json({msg : error.message}); 
+        return res.status(400).json({msg : error.message}); 
    }
 }
 
@@ -160,7 +160,7 @@ export async function updatePersonaje(req,res){
                 },{where:{id_personaje:id},transaction:t});
             }catch(error){
                 if(error.errors !== undefined){
-                    return res.json({msg: error.errors[0].message});
+                    return res.status(400).json({msg: error.errors[0].message});
                 }
             }
             
@@ -184,8 +184,7 @@ export async function updatePersonaje(req,res){
     
                     // si la pelicula no existe muestro un error
                     if(!movieNueva) {
-                        res.json({msg: `no existe la pelicula con el id: ${movie}`});
-                        throw new Error();
+                        throw new Error(`no existe la pelicula con el id: ${movie}`);
                     }
                     
                     //agrego la pelicula al arreglo de apariciones
@@ -204,7 +203,7 @@ export async function updatePersonaje(req,res){
         });
 
     } catch (error) {
-        return res.json({msg: error.message}); 
+        return res.status(400).json({msg: error.message}); 
     }
 }
 
