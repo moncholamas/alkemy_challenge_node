@@ -12,19 +12,46 @@ export default class personajes extends Model {
     },
     imagen: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false,
+      validate:{
+        notEmpty:{
+          args: true,
+          msg: "la imagen es un campo requerido"
+        }
+      }
     },
     nombre: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false,
+      unique:true,
+      validate:{
+        notEmpty:{
+          args: true,
+          msg: "el nombre es un campo requerido"
+        }
+      }
     },
     edad: {
       type: DataTypes.SMALLINT,
-      allowNull: true
+      allowNull: true,
+      validate:{
+        max: 200,                  
+        min: 1
+      }
     },
     peso: {
-      type: DataTypes.DECIMAL,
-      allowNull: true
+      type: DataTypes.SMALLINT,
+      allowNull: true,
+      validate:{
+        max: {
+          args:500,
+          msg: "el peso no debe ser superior a 500"
+        },                  
+        min: {
+          args: 1,
+          msg: "el peso debe ser un numero positivo"
+        }
+      }
     },
     historia: {
       type: DataTypes.TEXT,
@@ -34,8 +61,16 @@ export default class personajes extends Model {
     sequelize,
     tableName: 'personajes',
     schema: 'public',
+    hasTrigger: true,
     timestamps: false,
     indexes: [
+      {
+        name: "personajes_nombre_key",
+        unique: true,
+        fields: [
+          { name: "nombre" },
+        ]
+      },
       {
         name: "personajes_pkey",
         unique: true,

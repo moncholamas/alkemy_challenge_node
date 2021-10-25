@@ -37,8 +37,9 @@ npm install
 ```
 
 ### Generar base de datos
+En la raiz del proyecto ejecutar:
 ```sh
-psql -U username -d myDataBase -a -f /DB/disney.sql
+psql -U username -d myDataBase -a -f ./DB/disney.sql
 
 ```
 

@@ -12,7 +12,7 @@ export default class generos extends Model {
     },
     nombre: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,

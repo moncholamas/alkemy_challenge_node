@@ -1,18 +1,18 @@
 CREATE TABLE personajes(
 	id_personaje SERIAL,
-	imagen VARCHAR,
-	nombre VARCHAR,
+	imagen VARCHAR NOT NULL,
+	nombre VARCHAR UNIQUE NOT NULL,
 	edad SMALLINT,
-	peso DECIMAL,
+	peso SMALLINT,
 	historia TEXT,
 	PRIMARY KEY (id_personaje)
 );
 
 CREATE TABLE peliculas_series(
 	id_pelicula_serie SERIAL,
-	imagen VARCHAR,
-	titulo VARCHAR,
-	fecha_creacion DATE,
+	imagen VARCHAR NOT NULL,
+	titulo VARCHAR UNIQUE NOT NULL,
+	fecha_creacion DATE NOT NULL,
 	calificacion SMALLINT CHECK (calificacion <6 AND calificacion > 0),
 	id_genero INTEGER,
 	PRIMARY KEY (id_pelicula_serie)
@@ -20,7 +20,7 @@ CREATE TABLE peliculas_series(
 
 CREATE TABLE generos(
 	id_genero SERIAL,
-	nombre VARCHAR,
+	nombre VARCHAR NOT NULL,
 	PRIMARY KEY (id_genero)
 );
 
@@ -32,10 +32,10 @@ CREATE TABLE apariciones(
 
 CREATE TABLE users(
 	id_user SERIAL,
-	mail_user VARCHAR UNIQUE,
-	pass_user VARCHAR,
+	mail_user VARCHAR UNIQUE NOT NULL,
+	pass_user VARCHAR NOT NULL,
 	PRIMARY KEY (id_user)
-)
+);
 
 ALTER TABLE peliculas_series ADD CONSTRAINT "fkgeneros" 
     FOREIGN KEY (id_genero)

@@ -12,15 +12,18 @@ export default class users extends Model {
     },
     mail_user: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
       unique: "users_mail_user_key",
       validate:{
-        isEmail: true
+        isEmail:{
+          args: true,
+          msg: "ingrese un formato de correo valido"
+        }
       }
     },
     pass_user: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,

@@ -28,7 +28,7 @@ export async function buscarPorAparicion(id_movie){
         initModels(sequelize);
         const listadoPersonajes = await personajes.findAll({include:{model:apariciones,as:'apariciones',where:{id_pelicula_serie:id_movie}}});
         if(listadoPersonajes.length===0){
-            return {msg: "no se encontraron personajes que hayan participado en la pelicula con el id:", id_movie}
+            return {msg: "no se encontraron personajes que hayan participado en la pelicula con el id ingresado"}
         }
         return listadoPersonajes;
     } catch (error) {
@@ -57,7 +57,7 @@ export async function buscarPorPeso(peso){
     try {
         initModels(sequelize);
         const listadoPersonajes = await personajes.findAll({where:{peso}});
-        if(listadoPersonajes===0){
+        if(listadoPersonajes.length===0){
             return {msg: "no se encontraron personajes que coincidan con el peso ingresado"}
         }
         return listadoPersonajes;

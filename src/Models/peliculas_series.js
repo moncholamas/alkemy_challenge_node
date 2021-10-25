@@ -12,23 +12,46 @@ export default class peliculas_series extends Model {
     },
     imagen: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     },
     titulo: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false,
+      unique: "peliculas_series_titulo_key",
+      validate:{
+        notEmpty:{
+          args: true,
+          msg: "el nombre es un campo requerido"
+        }
+      }
     },
     fecha_creacion: {
       type: DataTypes.DATEONLY,
-      allowNull: true
+      allowNull: false,
     },
     calificacion: {
       type: DataTypes.SMALLINT,
-      allowNull: true
+      allowNull: true,
+      validate: {
+        min:{
+          args:1,
+          msg: "la puntuación mínima es de 1"
+        },
+        max: {
+          args:5,
+          msg: "la puntuación máxima es de 5"
+        }
+      }
     },
     id_genero: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      validate:{
+        len:{
+          args:[[1,5]],
+          msg: "los generos que puede ingresar son infantil(1), accion(2), ciencia ficcion(3), juvenil (4), animado(5)"
+        }
+      },
       references: {
         model: 'generos',
         key: 'id_genero'
@@ -38,6 +61,7 @@ export default class peliculas_series extends Model {
     sequelize,
     tableName: 'peliculas_series',
     schema: 'public',
+    hasTrigger: true,
     timestamps: false,
     indexes: [
       {
@@ -45,6 +69,13 @@ export default class peliculas_series extends Model {
         unique: true,
         fields: [
           { name: "id_pelicula_serie" },
+        ]
+      },
+      {
+        name: "peliculas_series_titulo_key",
+        unique: true,
+        fields: [
+          { name: "titulo" },
         ]
       },
     ]

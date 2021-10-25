@@ -20,12 +20,12 @@ export async function getAll(req,res){
             //si encuentra devuelve el resultado
             return res.status(200).json({
                 data: allPersonajes
-            })
+            });
         } catch (error) {
             console.log(error);
             return res.status(400).json({
                 msg: "error al obtener los personajes"
-            })
+            });
         }
     }
     else{
@@ -78,10 +78,15 @@ export async function newPersonaje(req,res){
 
 
     try {
-        //necesito cargar todo (transaccion)
+
+        //para garantizar que se carga todo correctamente (transaccion)
         await sequelize.transaction(async(t)=>{
             initModels(sequelize);
-            const nuevo = await personajes.create({
+            let nuevo;
+
+            //verifico que cumpla con el modelo
+            try {
+                nuevo = await personajes.create({
                 nombre,
                 imagen,
                 peso,
@@ -90,6 +95,12 @@ export async function newPersonaje(req,res){
             },{
                 transaction:t
             });
+            }catch(error){
+                //si no cumple las restricciones del modelo devuelve el error
+                if(error.errors!== undefined){
+                    return res.json({msg: error.errors[0].message});
+                }
+            }   
 
             //si hay ids de peliculas o series en movies[]
             if(movies && movies.length!==0){
@@ -101,7 +112,9 @@ export async function newPersonaje(req,res){
                     const movieNueva = await peliculas_series.findByPk(parseInt(movie));
 
                     // si la pelicula no existe muestro un error
-                    if(!movieNueva) res.json({msg: `no existe la pelicula con el id: ${movie}`});
+                    if(!movieNueva) {
+                        throw new Error(`no existe la pelicula con el id: ${movie}`);
+                    }
                     
                     //agrego la pelicula al arreglo de apariciones
                     arrayApariciones.push({id_personaje:nuevo.id_personaje, id_pelicula_serie: movie});
@@ -123,11 +136,8 @@ export async function newPersonaje(req,res){
             );
 
     } catch (error) {
-        console.error(error);
-        return res.status(200).json({
-            msg: "error al ingresar nuevo personaje"
-        });
-    }
+        return res.json({msg : error.message}); 
+   }
 }
 
 
@@ -135,19 +145,29 @@ export async function updatePersonaje(req,res){
     const id = req.params.id;
     const {nombre, imagen, peso, edad, historia, movies}= req.body;
 
-    try {
+    try {      
         initModels(sequelize);
-
+        
         await sequelize.transaction(async (t)=>{
-            const actualizado = await personajes.update({
-                nombre,
-                imagen,
-                peso,
-                edad,
-                historia
-            },{where:{id_personaje:id},transaction:t});
+            let actualizado;
+            try{
+                actualizado = await personajes.update({
+                    nombre,
+                    imagen,
+                    peso,
+                    edad,
+                    historia
+                },{where:{id_personaje:id},transaction:t});
+            }catch(error){
+                if(error.errors !== undefined){
+                    return res.json({msg: error.errors[0].message});
+                }
+            }
+            
     
-            if(actualizado[0] === 0){return res.status(200).json({msg:"no se encontraron coincidencias para actualizar"})}
+            if(actualizado[0] === 0){
+                throw new Error("no se encontraron coincidencias para actualizar");
+            }
     
     
             //si hay ids de peliculas o series en movies[]
@@ -163,7 +183,10 @@ export async function updatePersonaje(req,res){
                     const movieNueva = await peliculas_series.findByPk(parseInt(movie));
     
                     // si la pelicula no existe muestro un error
-                    if(!movieNueva) res.json({msg: `no existe la pelicula con el id: ${movie}`});
+                    if(!movieNueva) {
+                        res.json({msg: `no existe la pelicula con el id: ${movie}`});
+                        throw new Error();
+                    }
                     
                     //agrego la pelicula al arreglo de apariciones
                     arrayApariciones.push({id_personaje:id, id_pelicula_serie: movie});
@@ -181,10 +204,7 @@ export async function updatePersonaje(req,res){
         });
 
     } catch (error) {
-        console.log(error);
-        return res.status(400).json({
-            msg: "error al actualizar personaje"
-        })
+        return res.json({msg: error.message}); 
     }
 }
 

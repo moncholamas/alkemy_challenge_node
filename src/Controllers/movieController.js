@@ -5,6 +5,7 @@ import { buscarPorGenero, buscarPorTitulo, ordenarPorFecha } from './functions/f
 import apariciones from '../Models/apariciones';
 import personajes from '../Models/personajes';
 
+
 export async function getAll(req,res){
     //si no tiene parametros de busqueda devolvemos todas las series/peliculas
     if(Object.keys(req.query).length===0){
@@ -23,9 +24,9 @@ export async function getAll(req,res){
     }
     else{
         //hace la busqueda por los parametros ingresados
-        const {titulo, genre, order} = req.query;
+        const {name, genre, order} = req.query;
 
-        if(titulo){ return res.json(await buscarPorTitulo(titulo))}
+        if(name){ return res.json(await buscarPorTitulo(name))}
         if(genre){return res.json(await buscarPorGenero(genre))}
         if(order){return res.json(await ordenarPorFecha(order))}
 
@@ -63,13 +64,25 @@ export async function newMovie(req,res){
         initModels(sequelize);
 
         await sequelize.transaction(async (t)=>{
-            const nueva = await peliculas_series.create({
-                imagen, 
-                titulo, 
-                fecha_creacion, 
-                calificacion,
-                id_genero: id_genero || 1 //si no se ingresa un genero se ingresa como infantil
-            },{transaction:t});
+            let nueva;
+            try {
+                nueva = await peliculas_series.create({
+                    imagen, 
+                    titulo, 
+                    fecha_creacion, 
+                    calificacion: calificacion || 3,
+                    id_genero: id_genero || 1 //si no se ingresa un genero se ingresa como infantil
+                },{transaction:t});
+            } catch (error) {
+                //encuentra los errores para la validacion del modelo
+                if(error.errors !== undefined){
+                    return res.json({msg: error.errors[0].message})
+                }
+
+                //la restriccion de referencia a la tabla generos la notifico manualmente
+                return res.json({msg: "los generos que puede ingresar son infantil(1), accion(2), ciencia ficcion(3), juvenil (4), animado(5)"})
+            }
+            
     
             //si mandan un arreglo de personajes los agrego a las apariciones de la pelicula
             if(listado_personajes || listado_personajes.length!==0){
@@ -78,7 +91,9 @@ export async function newMovie(req,res){
                     const existePer = await personajes.findByPk(id_personaje);
                     
                     //si no encuntra el personaje muestra un error
-                    if(!existePer) return res.json({msg:"no se encontraron personajes con el id ingresado"})
+                    if(!existePer) {
+                        throw new Error(`no se encontraron personajes con el id ${id_personaje}`);
+                    }
                     
                     //si existe el personaje lo agrego al arreglo de apariciones
                     aparicionesEnMovie.push({id_personaje, id_pelicula_serie:nueva.id_pelicula_serie})
@@ -95,10 +110,7 @@ export async function newMovie(req,res){
         });
         
     } catch (error) {
-        console.log(error);
-        return res.json({
-            msg: "error al ingresar nueva movie"
-        }); 
+        return res.json({msg: error.message});  
     }
 }
 
@@ -131,18 +143,33 @@ export async function updateMovie(req,res){
         initModels(sequelize);
 
         await sequelize.transaction(async (t)=>{   
-            const actualizadas = await peliculas_series.update({
-                imagen, 
-                titulo, 
-                fecha_creacion, 
-                calificacion, 
-                id_genero: id_genero || 1
-            },{
-                where:{id_pelicula_serie:id},
-                transaction:t
-            });
-            console.log(actualizadas);
-            if(actualizadas[0] === 0){return res.json({msg: "no se encontraron coincidencias para actualizar"})}
+            let actualizadas; 
+            try {
+                actualizadas = await peliculas_series.update({
+                    imagen, 
+                    titulo, 
+                    fecha_creacion, 
+                    calificacion, 
+                    id_genero: id_genero || 1
+                },{
+                    where:{id_pelicula_serie:id},
+                    transaction:t
+                });
+            } catch (error) {
+                 //encuentra los errores para la validacion del modelo
+                 if(error.errors !== undefined){
+                    return res.json({msg: error.errors[0].message})
+                }
+
+                //la restriccion de referencia a la tabla generos la notifico manualmente
+                return res.json({msg: "los generos que puede ingresar son infantil(1), accion(2), ciencia ficcion(3), juvenil (4), animado(5)"})
+            }
+
+            
+            if(actualizadas[0] === 0){
+                res.json({msg: "no se encontraron coincidencias para actualizar"})
+                throw new Error();
+            }
     
     
             //si mandan un arreglo de personajes los agrego a las apariciones de la pelicula
@@ -156,8 +183,10 @@ export async function updateMovie(req,res){
                     const existePer = await personajes.findByPk(id_personaje);
                     
                     //si no encuntra el personaje muestra un error
-                    if(!existePer) return res.json({msg:"no se encontraron personajes con el id ingresado"})
-                    
+                    if(!existePer) {
+                        res.json({msg: `no se encontraron personajes con el id ${id_personaje}`});
+                        throw new Error();
+                    } 
                     //si existe el personaje lo agrego al arreglo de apariciones
                     aparicionesEnMovie.push({id_personaje, id_pelicula_serie:id})
                 }
@@ -172,9 +201,21 @@ export async function updateMovie(req,res){
         });
         
     } catch (error) {
-        console.log(error);
-        return res.json({
-            msg: "error al  actualizar un item"
-        }); 
+        switch (error.parent.code) {
+            case "23514":
+                return res.json({msg: "el rango para la calificacion debe ser de 1 - 5 incluidos" });
+            
+            case "23503":
+                return res.json({msg: "el id del genero no existe" });
+
+            case "23505":
+                return res.json({msg: "el nombre la serie o pelicula ya está registrado" });
+
+            case "22007":
+                    return res.json({msg: "por favor ingrese una fecha valida" });
+                
+            default:
+                return res.json({msg: "error al actualizar un item"}); 
+        }  
     }
 }

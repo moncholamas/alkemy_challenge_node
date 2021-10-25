@@ -4,11 +4,14 @@ import {sequelize} from '../DB/connection';
 import {encriptar, compararEncryp} from '../Helpers/encrypt';
 import jsonwebtoken from 'jsonwebtoken';
 import transport from '../Helpers/mailer';
-
+import {config} from 'dotenv';
+config();
 
 export async function login(req,res){
     const {mail_user, pass_user} = req.body;
     try {
+        if(pass_user===''||mail_user==='') return res.json({msg: "la clave y el correo son datos obligatorios"});
+
         initModels(sequelize);
         const userLogeado = await users.findOne({where:{mail_user}});
         if(!userLogeado){return res.json({msg:"la direccion de correo electrónico ingresada no existe"})}
@@ -42,12 +45,29 @@ export async function login(req,res){
 
 export  async function logup(req,res){
     const {mail_user, pass_user} = req.body;
+
     try {
+        if(pass_user===''||mail_user==='') return res.json({msg: "la clave y el correo son datos obligatorios"});
+        
         initModels(sequelize);
-        const userNuevo = await users.create({
-            mail_user,
-            pass_user : await encriptar(pass_user) //guarda a clave cifrada
-        });
+        let userNuevo;
+        try {
+            userNuevo = await users.create({
+                mail_user,
+                pass_user : await encriptar(pass_user) //guarda a clave cifrada
+            });
+        } catch (error) {
+            if(error.errors !== undefined){
+                if(error.name === 'SequelizeUniqueConstraintError'){
+                    return res.json({
+                        msg: "el correo electrónico ya existe, por favor elige otro"
+                    });
+                }
+                return res.json({msg: error.errors[0].message});
+                
+            }
+        }
+        
 
         //creo el token con jwt
         const token = jsonwebtoken.sign(
@@ -60,7 +80,7 @@ export  async function logup(req,res){
             });
         
         await transport.sendMail({
-            from: 'moncholamas@gmail.com',
+            from: process.env.MAIL_SENDER ,
             to: `<${mail_user}>`,
             subject: 'Gracias por usar nuestra API',
             html: `<h1>Te damos la bienvenida</h1>
@@ -77,22 +97,6 @@ export  async function logup(req,res){
             token,
         });
     } catch (error) {
-
-        if(error.name === 'SequelizeUniqueConstraintError'){
-            return res.json({
-                msg: "el correo electrónico ya existe, por favor elige otro"
-            });
-        }
-        if(error.name === 'SequelizeValidationError'){
-            return res.json({
-                msg: "ingrese un correo con formato válido"
-            });
-        }
-
-        //error al generar el envio del correo electronico
-        if (error.response && error.response.body && error.response.body.errorors) {
-            error.response.body.errorors.forEach(error => console.log('%s: %s', error.field, error.message));
-        }
 
         return res.json({
             msg: "error al crear el usuario",

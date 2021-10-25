@@ -44,8 +44,8 @@ El registro o el login devolverán un token necesario para las peticiones.
 ***
 ### Cuestiones generales
 Te recomendamos una de estas dos opciones:
-- cargar primero las peliculas y asociar los personajes con estás peliculas creadas.
-- cargar primero los personajes y luego asociar las peliculas con estos datos ya cargados. Este documento usa este método.
+1.  cargar primero las peliculas y asociar los personajes con estás peliculas creadas.
+2.  cargar primero los personajes y luego asociar las peliculas con estos datos ya cargados. Este documento usa este método.
 
 
 Consideramos los siguientes géneros disponibles:
