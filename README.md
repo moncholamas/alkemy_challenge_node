@@ -52,6 +52,8 @@ DB_PASS=            #clave para la db
 DB_SERVER=          #nombre del servidor (localhost)
 DB=                 #nombre de la base de datos
 SENDGRID_API_KEY=   #api key de sendgrid para enviar notificaciones por correo
+
+MAIL_SENDER=        #correo configurado como sender en sendgrid
 ```
 
 ___

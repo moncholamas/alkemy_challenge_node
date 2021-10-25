@@ -27,7 +27,10 @@ export default class personajes extends Model {
     nombre: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique:true,
+      unique:{
+        args:true,
+        msg:"el nombre ingresado ya se encuentra registrado"
+      },
       validate:{
         notEmpty:{
           args: true,

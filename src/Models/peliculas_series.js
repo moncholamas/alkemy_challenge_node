@@ -23,7 +23,10 @@ export default class peliculas_series extends Model {
     titulo: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: "peliculas_series_titulo_key",
+      unique:{
+        args:true,
+        msg:"el titulo ingresado ya se encuentra registrado"
+      },
       validate:{
         notEmpty:{
           args: true,
