@@ -12,7 +12,13 @@ export default class peliculas_series extends Model {
     },
     imagen: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate:{
+        isUrl:{
+          args:true,
+          msg: "ingresa un formato de url valida"
+        }
+      }
     },
     titulo: {
       type: DataTypes.STRING,

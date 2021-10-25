@@ -17,6 +17,10 @@ export default class personajes extends Model {
         notEmpty:{
           args: true,
           msg: "la imagen es un campo requerido"
+        },
+        isUrl: {
+          args:true,
+          msg: "ingresa un formato de url valida"
         }
       }
     },

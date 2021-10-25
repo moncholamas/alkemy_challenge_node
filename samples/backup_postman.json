@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"mail_user\": \"moncholamas@gmail.com\",\n    \"pass_user\": \"Manu\"\n}",
+							"raw": "{\n    \"mail_user\": \"moncholamas@gmail.com\",\n    \"pass_user\": \"manu\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -43,7 +43,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"mail_user\": \"moncholamas@gmail.com\",\n    \"pass_user\": \"Manu\"\n}",
+							"raw": "{\n    \"mail_user\": \"moncholamas@gmail.com\",\n    \"pass_user\": \"manu\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -73,9 +73,22 @@
 					"name": "getall",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "token",
+								"value": "{{alkemy_test_3}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": ""
+							"raw": "localhost:3000/characters",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"characters"
+							]
 						}
 					},
 					"response": []
@@ -87,13 +100,13 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"value": "{{alkemy_test_2}}",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nombre\":\"darth maul\",\n    \"imagen\": \"url a una imagen2\",\n    \"peso\": 70,\n    \"edad\":31,\n    \"historia\":\"otra prueba cualquier\",\n    \"movies\": []\n}",
+							"raw": "{\n    \"nombre\":\"jango fett\",\n    \"imagen\": \"url_a_una_imagen\",\n    \"peso\": 90,\n    \"edad\": 45,\n    \"historia\":\"el origen de mandalorian\",\n    \"movies\": []\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -128,7 +141,7 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "{{alkemytoken}}",
+								"value": "{{alkemy_test}}",
 								"type": "text"
 							}
 						],
@@ -154,13 +167,13 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"value": "{{alkemy_test_3}}",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nombre\":\"prueba\",\n    \"imagen\": \"pruebaimagen\",\n    \"peso\": 50,\n    \"edad\":21,\n    \"historia\":\"una prueba cualquier\",\n    \"movies\": []\n}",
+							"raw": "{\n    \"nombre\":\"jango fett\",\n    \"imagen\": \"url_a_una_imagen\",\n    \"peso\": 90,\n    \"edad\": 50,\n    \"historia\":\"en realidad no fue el inicio del mandalorian\",\n    \"movies\": []\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -168,7 +181,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/characters/update/10",
+							"raw": "localhost:3000/characters/update/27",
 							"host": [
 								"localhost"
 							],
@@ -176,25 +189,44 @@
 							"path": [
 								"characters",
 								"update",
-								"10"
+								"27"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "busquedas get",
+					"name": "busquedas_name",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "token",
+								"value": "{{alkemy_test}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": ""
+							"raw": "localhost:3000/characters?name=jan",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"characters"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "jan"
+								}
+							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "getbyid",
+					"name": "filter_age",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -203,7 +235,7 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"value": "{{alkemy_test}}",
 								"type": "text"
 							}
 						],
@@ -212,14 +244,104 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "localhost:3000/characters/10",
+							"raw": "localhost:3000/characters?age=40",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"characters"
+							],
+							"query": [
+								{
+									"key": "age",
+									"value": "40"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "filter_weight",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{alkemy_test}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/characters?weight=9",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"characters"
+							],
+							"query": [
+								{
+									"key": "weight",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "filter_movies",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{alkemy_test}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/characters?movies=9",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"characters"
+							],
+							"query": [
+								{
+									"key": "movies",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "details_by_id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{alkemy_test}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/characters/2",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
 								"characters",
-								"10"
+								"2"
 							]
 						}
 					},
@@ -237,19 +359,18 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"value": "{{alkemy_test}}",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "localhost:3000/movies/6",
+							"raw": "localhost:3000/movies",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"movies",
-								"6"
+								"movies"
 							]
 						}
 					},
@@ -262,13 +383,13 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"value": "{{alkemy_test_3}}",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"titulo\": \"star wars 3\",\n    \"imagen\": \"unaimagenurl\",\n    \"fecha_creacion\": \"2000-06-06\",\n    \"calificacion\": 5,\n    \"genero\": 3,\n    \"listado_personajes\": [3,4,5,6]\n}",
+							"raw": "{\n    \"titulo\": \"star wars - episodio\",\n    \"imagen\": \"url_a_una_imagen\",\n    \"fecha_creacion\": \"2020\",\n    \"calificacion\": 5,\n    \"id_genero\": 3,\n    \"listado_personajes\": []\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -295,12 +416,12 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"value": "{{alkemy_test}}",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "localhost:3000/movies/delete/2",
+							"raw": "localhost:3000/movies/delete/1",
 							"host": [
 								"localhost"
 							],
@@ -308,7 +429,7 @@
 							"path": [
 								"movies",
 								"delete",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -321,13 +442,13 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDg0NjQ5NywiZXhwIjoxNjM0OTMyODk3fQ.aIyUdAQeLYdKA5K1hHop7U-tfY0WuRTS1Y1ksxq1Hpg",
+								"value": "{{alkemy_test_3}}",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"titulo\": \"star wars 22\",\n    \"imagen\": \"le cambie la imagen\",\n    \"fecha_creacion\": \"1988-06-06\",\n    \"calificacion\": 5,\n    \"listado_personajes\": []\n}",
+							"raw": "{\n    \"titulo\": \"star wars - episodio 2\",\n    \"imagen\": \"le cambie la imagen otra vez\",\n    \"fecha_creacion\": \"2002-07-09\",\n    \"calificacion\": 5,\n    \"id_genero\": 3,\n    \"listado_personajes\": []\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -335,7 +456,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/movies/update/6",
+							"raw": "localhost:3000/movies/update/7",
 							"host": [
 								"localhost"
 							],
@@ -343,7 +464,122 @@
 							"path": [
 								"movies",
 								"update",
-								"6"
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search_title",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{alkemy_test}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/movies?name=star",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"movies"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "star"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "filter_genre",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{alkemy_test}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/movies?genre=3",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"movies"
+							],
+							"query": [
+								{
+									"key": "genre",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "filter_order_date",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{alkemy_test}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/movies?order=asc",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"movies"
+							],
+							"query": [
+								{
+									"key": "order",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "details_by_id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{alkemy_test}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/movies/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"movies",
+								"2"
 							]
 						}
 					},
@@ -360,6 +596,18 @@
 		{
 			"key": "alkemy3",
 			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTYzNDY3MDMyMCwiZXhwIjoxNjM0NzU2NzIwfQ.9hW8wo8d-F2Ko7_qk38BPBOUt0cC9wqBwwBZ6qgsKbE"
+		},
+		{
+			"key": "alkemy_test",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjM0OTQzNTc5LCJleHAiOjE2MzUwMjk5Nzl9.ZXonr1bvA29OUUtNDbGVFTP-oTc4euM8p_V6IpDAF1g"
+		},
+		{
+			"key": "alkemy_test_2",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjM0OTQ1OTg2LCJleHAiOjE2MzUwMzIzODZ9.q5qzqSMur6sf53BguUK2M-vi-fjJm17VlglpXzt92L8"
+		},
+		{
+			"key": "alkemy_test_3",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjM1MTg0Mjk2LCJleHAiOjE2MzUyNzA2OTZ9.QDlQQ-eymM-ZfkNMcaTqjg9LGv3GN4fiHphYV3tIsvw"
 		}
 	]
 }
